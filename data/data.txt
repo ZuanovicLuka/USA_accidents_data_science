@@ -1,0 +1,3 @@
+https://kaggle.com/datasets/5ec8b60293700ec70dbba506d81405e5072dc8fdfbde5718f83f76d37c37aae4
+
+This is the link to our dataset on kaggle, download all and just put it in the /data folder.

@@ -1,2 +1,3 @@
-data/
-!data/us_cities.xlsx
+data/*
+!data/
+!data/data.txt

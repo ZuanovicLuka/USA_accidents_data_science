@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LA Fatal Crashes Dashboard</title>
+
+    <style>
+      :root {
+        --bg: #d5e4fd;
+        --card: #ffffff;
+        --accent: #1f77b4;
+        --text: #222;
+        --muted: #666;
+        --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        --radius: 10px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Roboto, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      header {
+        background: #bbd1f6;
+        box-shadow: var(--shadow);
+        color: #333;
+      }
+
+      .header-inner {
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      main {
+        max-width: 1300px;
+        margin: 30px auto;
+        padding: 0 20px 40px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 20px;
+      }
+
+      .card h2 {
+        margin: 0 0 15px;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      iframe {
+        width: 100%;
+        height: 420px;
+        border: none;
+        border-radius: 8px;
+      }
+
+      .map-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .map-tab {
+        padding: 8px 14px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        background: #f3f6fb;
+        cursor: pointer;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .map-tab.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .year-selector {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 30px;
+        font-size: 16px;
+        color: #333;
+        text-align: center;
+      }
+
+      select,
+      button {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      @media (max-width: 900px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+
+        iframe {
+          height: 360px;
+        }
+      }
+
+      footer {
+        text-align: center;
+        padding: 20px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .spinner {
+        width: 32px;
+        height: 32px;
+        border: 4px solid #e0e0e0;
+        border-top: 4px solid var(--accent);
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+        margin: 0 auto;
+      }
+
+      .spinner-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 140px;
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .spinner-text {
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .result-table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 14px;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .result-table th {
+        background: #eef3fb;
+        color: #1f77b4;
+        padding: 10px;
+        font-weight: 600;
+        border-bottom: 2px solid #d0d9ea;
+        text-align: left;
+      }
+
+      .result-table th:nth-child(2),
+      .result-table th:nth-child(3),
+      .result-table th:nth-child(4) {
+        text-align: right;
+      }
+
+      .result-table td {
+        padding: 9px 10px;
+        border-bottom: 1px solid #e6ebf5;
+      }
+
+      .result-table tr:nth-child(even) {
+        background: #fafcff;
+      }
+
+      .result-table tr:hover {
+        background: #f1f6ff;
+      }
+
+      .result-table td:last-child,
+      .result-table th:last-child {
+        text-align: right;
+      }
+
+      .result-table td:nth-child(2),
+      .result-table td:nth-child(3),
+      .result-table td:nth-child(4) {
+        text-align: right;
+      }
+
+      .performance-summary {
+        margin-top: 20px;
+        font-size: 13px;
+        color: #444;
+        font-size: medium;
+      }
+
+      .performance-summary strong {
+        color: #1f77b4;
+        font-size: medium;
+      }
+
+      .info-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 1px solid var(--accent);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent);
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .info-icon:hover {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .model-info {
+        margin: 10px 0 15px;
+        padding: 12px 14px;
+        background: #f4f8ff;
+        border-left: 4px solid var(--accent);
+        border-radius: 6px;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .model-info p {
+        margin: 6px 0 0;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="header-inner">
+        <h1>Los Angeles fatal crashes (2015-2023)</h1>
+      </div>
+    </header>
+
+    <main>
+      <div class="card">
+        <h2>Spatial distribution of fatal crashes</h2>
+
+        <div class="map-tabs">
+          <div class="map-tab active" onclick="switchMap('all', this)">
+            Clusters for all years
+          </div>
+          <div class="map-tab" onclick="switchMap('2023', this)">
+            2023 clusters
+          </div>
+        </div>
+
+        <iframe
+          id="map"
+          src="../data/maps/la_fatal_clusters_by_year.html"
+        ></iframe>
+      </div>
+
+      <div class="card" id="prediction-panel" style="display: none">
+        <h2 style="display: flex; align-items: center; gap: 8px">
+          Prediction model
+          <span
+            class="info-icon"
+            onclick="toggleModelInfo()"
+            title="Model details"
+          >
+            i
+          </span>
+        </h2>
+        <div id="model-info" class="model-info" style="display: none">
+          <strong>Model information</strong>
+          <p>
+            The prediction model was trained using cluster-level data from
+            <b>2017-2021</b>. For each cluster, a representative center point
+            was computed by averaging the geographic locations of all fatal
+            crashes within the cluster. A circular area with a radius of 2000 m
+            was then defined around this center, and the model predicts the
+            expected number of fatal crashes within each such area. The model
+            uses the following input features:
+          </p>
+
+          <ul>
+            <li>
+              <b>fatal_prev_1</b>: number of fatal crashes in the previous year
+              (given only to Structural + past crashes model)
+            </li>
+            <li>
+              <b>fatal_prev_2</b>: number of fatal crashes two years prior
+              (given only to Structural + past crashes model)
+            </li>
+            <li>
+              <b>road_density</b>: density of the road network within each
+              cluster area (given to both models)
+            </li>
+            <li>
+              <b>intersection_density</b>: density of road intersections,
+              representing traffic complexity (given to both models)
+            </li>
+            <li>
+              <b>primary_road_frac</b>: proportion of road segments classified
+              as major arterial roads (motorways, trunk roads, or primary roads)
+              within each cluster, reflecting the dominance of high-capacity,
+              high-speed roads (given to both models)
+            </li>
+          </ul>
+        </div>
+
+        <p>
+          Using the trained prediction model, generate predicted
+          <b>fatal crash counts</b> for the key locations (clusters) shown on
+          the map.
+        </p>
+
+        <div class="year-selector">
+          <label><strong>Model:</strong></label>
+          <select id="model-select" onchange="switchModel()">
+            <option value="model1">Structural model</option>
+            <option value="model2">Structural + past crashes model</option>
+          </select>
+
+          <label><strong>Prediction year:</strong></label>
+
+          <select id="predict-year">
+            <option value="2022">2022 (model validation)</option>
+            <option value="2023">2023 (model validation)</option>
+            <option value="2024">2024 (future prediction)</option>
+          </select>
+
+          <button onclick="runPrediction()">Run prediction</button>
+        </div>
+
+        <div id="loader" class="spinner-container" style="display: none">
+          <div class="spinner"></div>
+          <div class="spinner-text">Predicting...</div>
+        </div>
+
+        <div
+          id="prediction-results"
+          style="display: none; margin-top: 15px"
+        ></div>
+      </div>
+
+      <div class="year-selector">
+        <label for="year">
+          <strong>Select year:</strong>
+          Choose the year for which you would like to explore the temporal and
+          environmental crash patterns.
+        </label>
+
+        <select id="year" onchange="updateDashboard()">
+          <option value="all">All years</option>
+          <option value="2015">2015</option>
+          <option value="2016">2016</option>
+          <option value="2017">2017</option>
+          <option value="2018">2018</option>
+          <option value="2019">2019</option>
+          <option value="2020">2020</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
+          <option value="2023">2023</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <iframe
+          id="hours"
+          src="../data/charts_for_html/hours_all.html"
+        ></iframe>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <iframe
+            id="weather"
+            src="../data/charts_for_html/weather_all.html"
+          ></iframe>
+        </div>
+
+        <div class="card">
+          <iframe
+            id="light"
+            src="../data/charts_for_html/light_all.html"
+          ></iframe>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      Data source: FARS (NHTSA) • Analysis and visualization for academic
+      purposes
+    </footer>
+
+    <script>
+      function toggleModelInfo() {
+        const box = document.getElementById("model-info");
+        box.style.display = box.style.display === "none" ? "block" : "none";
+      }
+
+      function updateDashboard() {
+        const y = document.getElementById("year").value;
+
+        document.getElementById("hours").src =
+          y === "all"
+            ? "../data/charts_for_html/hours_all.html"
+            : `../data/charts_for_html/hours_${y}.html`;
+
+        document.getElementById("weather").src =
+          y === "all"
+            ? "../data/charts_for_html/weather_all.html"
+            : `../data/charts_for_html/weather_${y}.html`;
+
+        document.getElementById("light").src =
+          y === "all"
+            ? "../data/charts_for_html/light_all.html"
+            : `../data/charts_for_html/light_${y}.html`;
+      }
+
+      function switchMap(type, el) {
+        const iframe = document.getElementById("map");
+        const panel = document.getElementById("prediction-panel");
+
+        iframe.src =
+          type === "2023"
+            ? "../data/maps/la_fatal_clusters_2023.html"
+            : "../data/maps/la_fatal_clusters_by_year.html";
+
+        document
+          .querySelectorAll(".map-tab")
+          .forEach((t) => t.classList.remove("active"));
+
+        el.classList.add("active");
+
+        panel.style.display = type === "2023" ? "block" : "none";
+      }
+
+      let model1Results = null;
+      let model2Results = null;
+      let modelResults = null;
+
+      Promise.all([
+        fetch("../data/predictions/model1_results.json").then((res) =>
+          res.json()
+        ),
+        fetch("../data/predictions/model2_results.json").then((res) =>
+          res.json()
+        ),
+      ])
+        .then(([m1, m2]) => {
+          model1Results = m1;
+          model2Results = m2;
+          modelResults = model1Results;
+        })
+        .catch((err) => console.error(err));
+
+      function switchModel() {
+        const selected = document.getElementById("model-select").value;
+
+        if (selected === "model1") {
+          modelResults = model1Results;
+        } else {
+          modelResults = model2Results;
+        }
+      }
+
+      function runPrediction() {
+        const loader = document.getElementById("loader");
+        const results = document.getElementById("prediction-results");
+        const year = document.getElementById("predict-year").value;
+
+        if (!modelResults) {
+          results.innerHTML = "Model data not loaded.";
+          results.style.display = "block";
+          return;
+        }
+
+        results.style.display = "none";
+        loader.style.display = "flex";
+
+        setTimeout(() => {
+          loader.style.display = "none";
+
+          let html = "";
+
+          if (year === "2022") {
+            const rows = modelResults.evaluation_2022;
+            const perf = modelResults.performance_summary;
+
+            html += "<strong>Model evaluation - 2022</strong><br><br>";
+            html += `
+              <table class="result-table">
+                <colgroup>
+                  <col style="width: 20%">
+                  <col style="width: 26%">
+                  <col style="width: 27%">
+                  <col style="width: 27%">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Cluster</th>
+                    <th>Observed</th>
+                    <th>Predicted</th>
+                    <th>Abs. error</th>
+                  </tr>
+                </thead>
+                <tbody>
+            `;
+
+            rows.forEach((r) => {
+              html += `
+            <tr>
+              <td>${r.cluster_id}</td>
+              <td>${r.observed_crashes}</td>
+              <td>${r.predicted_crashes}</td>
+              <td>${r.absolute_error}</td>
+            </tr>`;
+            });
+
+            html += "</tbody></table>";
+
+            html += `
+              <div class="performance-summary">
+                <strong>Performance summary:</strong>
+                MAE baseline = ${perf.mae_baseline} |
+                MAE Poisson = ${perf.mae_poisson} |
+                Improvement = ${perf.improvement_percent}%
+              </div>
+            `;
+          }
+
+          if (year === "2023") {
+            const rows = modelResults.evaluation_2023;
+            const perf = modelResults.performance_summary;
+
+            html += "<strong>Model evaluation - 2023</strong><br><br>";
+            html += `
+              <table class="result-table">
+                <colgroup>
+                  <col style="width: 20%">
+                  <col style="width: 26%">
+                  <col style="width: 27%">
+                  <col style="width: 27%">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Cluster</th>
+                    <th>Observed</th>
+                    <th>Predicted</th>
+                    <th>Abs. error</th>
+                  </tr>
+                </thead>
+                <tbody>
+            `;
+
+            rows.forEach((r) => {
+              html += `
+                    <tr>
+                      <td>${r.cluster_id}</td>
+                      <td>${r.observed_crashes}</td>
+                      <td>${r.predicted_crashes}</td>
+                      <td>${r.absolute_error}</td>
+                    </tr>`;
+            });
+
+            html += "</tbody></table>";
+
+            html += `
+              <div class="performance-summary">
+                <strong>Performance summary:</strong>
+                MAE baseline = ${perf.mae_baseline} |
+                MAE Poisson = ${perf.mae_poisson} |
+                Improvement = ${perf.improvement_percent}%
+              </div>
+            `;
+          }
+
+          if (year === "2024") {
+            const rows = modelResults.prediction_2024;
+
+            html += "<strong>Future prediction - 2024</strong><br><br>";
+            html += `
+              <table class="result-table">
+                <colgroup>
+                  <col style="width: 30%">
+                  <col style="width: 40%">
+                  <col style="width: 30%">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Cluster</th>
+                    <th>Predicted fatal crashes</th>
+                    <th>Risk</th>
+                  </tr>
+                </thead>
+                <tbody>
+            `;
+
+            rows.forEach((r) => {
+              const riskColor =
+                r.fatal_risk === 1
+                  ? "#2ecc71"
+                  : r.fatal_risk === 2
+                  ? "#f1c40f"
+                  : "#e74c3c";
+
+              html += `
+                    <tr>
+                      <td>${r.cluster_id}</td>
+                      <td>${r.predicted_crashes}</td>
+                      <td style="font-weight:600; color:${riskColor}">
+                        ${r.fatal_risk_label}
+                      </td>
+                    </tr>`;
+            });
+
+            html += "</tbody></table>";
+          }
+
+          results.innerHTML = html;
+          results.style.display = "block";
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>
