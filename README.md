@@ -15,6 +15,15 @@ This repository contains a data analysis + modeling pipeline using **U.S. Fatali
   - weather enrichment (from downloaded daily JSON files)
   - VMT integration
   - predictive modeling + clustering analyses for selected locations (e.g., Dallas and Los Angeles)
+ 
+- `app/app.html`  
+  Interactive dashboard for **Los Angeles fatal crashes (2015–2023)**:
+  - spatial cluster maps (all years vs. 2023 clusters)
+  - year selector to explore temporal and environmental patterns
+  - embedded charts (hour-of-day, weather, lighting conditions)
+  - optional prediction panel (for 2023 clusters) that loads precomputed model outputs (`model1_results.json`, `model2_results.json`) and displays:
+    - 2022/2023 validation tables (observed vs. predicted + absolute error)
+    - 2024 forward predictions with risk labels
 
 ## Data Notes
 
@@ -33,10 +42,10 @@ Just download all the files and put them in the **/data** folder.
    - Start with `eda.ipynb` for exploratory visuals
    - Run `main.ipynb` for the full preprocessing + modeling pipeline and final report
 
+3. Open the dashboard:
+   - Open `app/app.html` in a browser
+
 ## Authors
 
 - Luka Zuanović (https://github.com/ZuanovicLuka)
 - Patricija Marijanović (https://github.com/patricija-marijanovic)
-
-
-
