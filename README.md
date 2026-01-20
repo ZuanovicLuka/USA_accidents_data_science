@@ -18,7 +18,10 @@ This repository contains a data analysis + modeling pipeline using **U.S. Fatali
 
 ## Data Notes
 
-The raw dataset is **not included in the repository** due to file size. But inside the data folder, you can find the data.txt with a link to our 
+The raw dataset is **not included in the repository** due to file size. But inside the **/data** folder, you can find **data.txt** file containing a link to our dataset on kaggle.
+- LINK: https://kaggle.com/datasets/5ec8b60293700ec70dbba506d81405e5072dc8fdfbde5718f83f76d37c37aae4
+
+Just download all the files and put them in the **/data** folder.
 
 ## How to Run
 
@@ -34,3 +37,4 @@ The raw dataset is **not included in the repository** due to file size. But insi
 
 - Luka Zuanović (https://github.com/ZuanovicLuka)
 - Patricija Marijanović (https://github.com/patricija-marijanovic)
+
