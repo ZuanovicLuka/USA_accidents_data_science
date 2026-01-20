@@ -4,11 +4,11 @@ This repository contains a data analysis + modeling pipeline using **U.S. Fatali
 
 ## Contents
 
-- `eda.ipynb`  
+- `code/eda.ipynb`  
   Exploratory Data Analysis (EDA) focused on the **2015-2018** period, including plots and interpretation notes.  
   Saves visual outputs under `EDA_visualizations/`.
 
-- `main.ipynb`  
+- `code/main.ipynb`  
   Full final report notebook containing the complete workflow:
   - loading and preprocessing FARS data
   - aggregating crashes at the state/year level
@@ -37,5 +37,6 @@ Just download all the files and put them in the **/data** folder.
 
 - Luka Zuanović (https://github.com/ZuanovicLuka)
 - Patricija Marijanović (https://github.com/patricija-marijanovic)
+
 
 
