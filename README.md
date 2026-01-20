@@ -17,7 +17,7 @@ This repository contains a data analysis + modeling pipeline using **U.S. Fatali
   - predictive modeling + clustering analyses for selected locations (e.g., Dallas and Los Angeles)
  
 - `app/app.html`  
-  Interactive dashboard for **Los Angeles fatal crashes (2015–2023)**:
+  Interactive dashboard for **Los Angeles fatal crashes (2015-2023)**:
   - spatial cluster maps (all years vs. 2023 clusters)
   - year selector to explore temporal and environmental patterns
   - embedded charts (hour-of-day, weather, lighting conditions)
@@ -49,3 +49,4 @@ Just download all the files and put them in the **/data** folder.
 
 - Luka Zuanović (https://github.com/ZuanovicLuka)
 - Patricija Marijanović (https://github.com/patricija-marijanovic)
+
