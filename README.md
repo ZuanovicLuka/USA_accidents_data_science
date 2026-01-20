@@ -5,7 +5,7 @@ This repository contains a data analysis + modeling pipeline using **U.S. Fatali
 ## Contents
 
 - `eda.ipynb`  
-  Exploratory Data Analysis (EDA) focused on the **2015–2018** period, including plots and interpretation notes.  
+  Exploratory Data Analysis (EDA) focused on the **2015-2018** period, including plots and interpretation notes.  
   Saves visual outputs under `EDA_visualizations/`.
 
 - `main.ipynb`  
@@ -37,4 +37,5 @@ Just download all the files and put them in the **/data** folder.
 
 - Luka Zuanović (https://github.com/ZuanovicLuka)
 - Patricija Marijanović (https://github.com/patricija-marijanovic)
+
 
